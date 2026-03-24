@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "motion/react";
 import { Play, Square, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import ConfettiExplosion from "react-confetti-explosion";
 import { Slider } from "@/components/ui/slider";
 import { InteractiveButton } from "@/components/shared/interactive-button";
+import { MagneticWrapper } from "@/components/shared/magnetic-wrapper";
 import type { SoundParameters, MusicalKey } from "@/types";
 
 const KEYS: MusicalKey[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -34,29 +36,51 @@ export function Controls({
   onStop,
   onUpdateParams,
 }: ControlsProps) {
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const handlePlay = () => {
+    onPlay();
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 2500);
+  };
+
   return (
     <div className="space-y-6">
       {/* Transport */}
       <div className="flex items-center gap-3">
-        {isPlaying ? (
-          <InteractiveButton
-            onClick={onStop}
-            color="#FF4757"
-            className="flex items-center gap-2 rounded-full border-2 border-[#FF4757] bg-[#FFF0F0] px-6 py-2.5 font-bold text-[#FF4757] cartoon-shadow transition-colors hover:bg-[#FF4757] hover:text-white"
-          >
-            <Square className="size-4 fill-current" />
-            Stop
-          </InteractiveButton>
-        ) : (
-          <InteractiveButton
-            onClick={onPlay}
-            color="#FF6B6B"
-            className="flex items-center gap-2 rounded-full bg-[#FF6B6B] px-6 py-2.5 font-bold text-white cartoon-shadow-lg"
-          >
-            <Play className="size-4 fill-current" />
-            Play
-          </InteractiveButton>
-        )}
+        <div className="relative">
+          {showConfetti && (
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <ConfettiExplosion
+                force={0.6}
+                duration={2200}
+                particleCount={80}
+                colors={["#FF6B6B", "#FFE66D", "#A8E6CF", "#4ECDC4", "#DDA0DD", "#87CEEB"]}
+                width={300}
+              />
+            </div>
+          )}
+
+          {isPlaying ? (
+            <InteractiveButton
+              onClick={onStop}
+              color="#FF4757"
+              className="flex items-center gap-2 rounded-full border-2 border-[#FF4757] bg-[#FFF0F0] px-6 py-2.5 font-bold text-[#FF4757] cartoon-shadow transition-colors hover:bg-[#FF4757] hover:text-white"
+            >
+              <Square className="size-4 fill-current" />
+              Stop
+            </InteractiveButton>
+          ) : (
+            <InteractiveButton
+              onClick={handlePlay}
+              color="#FF6B6B"
+              className="flex items-center gap-2 rounded-full bg-[#FF6B6B] px-6 py-2.5 font-bold text-white cartoon-shadow-lg"
+            >
+              <Play className="size-4 fill-current" />
+              Play
+            </InteractiveButton>
+          )}
+        </div>
 
         <InteractiveButton
           onClick={() =>
@@ -101,18 +125,19 @@ export function Controls({
         </label>
         <div className="grid grid-cols-6 gap-1.5">
           {KEYS.map((k) => (
-            <motion.button
-              key={k}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => onUpdateParams({ key: k })}
-              className={`rounded-xl px-2 py-2 text-xs font-bold transition-all ${
-                parameters.key === k
-                  ? "bg-[#FF6B6B] text-white cartoon-shadow"
-                  : "bg-secondary text-muted-foreground hover:bg-[#FFE66D] hover:text-[#2C3E50]"
-              }`}
-            >
-              {k}
-            </motion.button>
+            <MagneticWrapper key={k} strength={8} range={1.2}>
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                onClick={() => onUpdateParams({ key: k })}
+                className={`w-full rounded-xl px-2 py-2 text-xs font-bold transition-all ${
+                  parameters.key === k
+                    ? "bg-[#FF6B6B] text-white cartoon-shadow"
+                    : "bg-secondary text-muted-foreground hover:bg-[#FFE66D] hover:text-[#2C3E50]"
+                }`}
+              >
+                {k}
+              </motion.button>
+            </MagneticWrapper>
           ))}
         </div>
       </div>
@@ -134,24 +159,25 @@ export function Controls({
               "mysterious",
             ] as const
           ).map((mood) => (
-            <motion.button
-              key={mood}
-              whileTap={{ scale: 0.9 }}
-              whileHover={{ scale: 1.05 }}
-              onClick={() => onUpdateParams({ mood })}
-              className={`rounded-full border-2 px-4 py-1.5 text-xs font-bold capitalize transition-all ${
-                parameters.mood === mood
-                  ? "text-white cartoon-shadow"
-                  : "border-border bg-card text-muted-foreground hover:border-current"
-              }`}
-              style={
-                parameters.mood === mood
-                  ? { backgroundColor: MOOD_COLORS[mood], borderColor: MOOD_COLORS[mood] }
-                  : undefined
-              }
-            >
-              {mood}
-            </motion.button>
+            <MagneticWrapper key={mood} strength={10}>
+              <motion.button
+                whileTap={{ scale: 0.85 }}
+                whileHover={{ scale: 1.08 }}
+                onClick={() => onUpdateParams({ mood })}
+                className={`rounded-full border-2 px-4 py-1.5 text-xs font-bold capitalize transition-all ${
+                  parameters.mood === mood
+                    ? "text-white cartoon-shadow"
+                    : "border-border bg-card text-muted-foreground hover:border-current"
+                }`}
+                style={
+                  parameters.mood === mood
+                    ? { backgroundColor: MOOD_COLORS[mood], borderColor: MOOD_COLORS[mood] }
+                    : undefined
+                }
+              >
+                {mood}
+              </motion.button>
+            </MagneticWrapper>
           ))}
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { Headphones, Layers, Share2, Sparkles } from "lucide-react";
+import Tilt from "react-parallax-tilt";
 
 const STEPS = [
   {
@@ -75,33 +76,47 @@ export function DemoSection() {
                 stiffness: 200,
                 damping: 20,
               }}
-              className={`group relative overflow-hidden rounded-3xl border-2 border-border ${step.bg} p-8 cartoon-shadow transition-transform hover:scale-[1.02]`}
             >
-              {/* Step number watermark */}
-              <span
-                className="absolute -right-2 -top-4 text-8xl font-black opacity-[0.07]"
-                style={{ color: step.color }}
+              <Tilt
+                tiltMaxAngleX={8}
+                tiltMaxAngleY={8}
+                glareEnable
+                glareMaxOpacity={0.15}
+                glareColor={step.color}
+                glareBorderRadius="1.5rem"
+                transitionSpeed={400}
+                scale={1.02}
               >
-                {step.num}
-              </span>
-
-              <div className="relative flex items-start gap-5">
-                {/* Icon */}
                 <div
-                  className="flex size-14 shrink-0 items-center justify-center rounded-2xl text-white cartoon-shadow"
-                  style={{ backgroundColor: step.color }}
+                  className={`group relative overflow-hidden rounded-3xl border-2 border-border ${step.bg} p-8 cartoon-shadow`}
                 >
-                  <step.icon className="size-6" />
-                </div>
+                  {/* Step number watermark */}
+                  <span
+                    className="absolute -right-2 -top-4 text-8xl font-black opacity-[0.07]"
+                    style={{ color: step.color }}
+                  >
+                    {step.num}
+                  </span>
 
-                {/* Content */}
-                <div>
-                  <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {step.desc}
-                  </p>
+                  <div className="relative flex items-start gap-5">
+                    {/* Icon */}
+                    <div
+                      className="flex size-14 shrink-0 items-center justify-center rounded-2xl text-white cartoon-shadow"
+                      style={{ backgroundColor: step.color }}
+                    >
+                      <step.icon className="size-6" />
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {step.desc}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </Tilt>
             </motion.div>
           ))}
         </div>
