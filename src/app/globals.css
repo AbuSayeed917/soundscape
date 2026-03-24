@@ -47,54 +47,13 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* SoundScape custom tokens */
-  --color-glow: var(--glow);
-  --color-glow-muted: var(--glow-muted);
-}
-
-/* SoundScape — always dark, audio-first aesthetic */
-:root {
-  --background: oklch(0.09 0.005 260);
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.13 0.005 260);
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.13 0.005 260);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.75 0.15 195);
-  --primary-foreground: oklch(0.1 0.005 260);
-  --secondary: oklch(0.18 0.005 260);
-  --secondary-foreground: oklch(0.9 0 0);
-  --muted: oklch(0.18 0.005 260);
-  --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.22 0.01 260);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.75 0.15 195);
-  --chart-1: oklch(0.75 0.15 195);
-  --chart-2: oklch(0.7 0.15 160);
-  --chart-3: oklch(0.65 0.18 280);
-  --chart-4: oklch(0.6 0.2 330);
-  --chart-5: oklch(0.7 0.15 60);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.11 0.005 260);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.75 0.15 195);
-  --sidebar-primary-foreground: oklch(0.1 0.005 260);
-  --sidebar-accent: oklch(0.18 0.005 260);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.75 0.15 195);
-
-  /* Glow accent for audio visualizer elements */
-  --glow: oklch(0.75 0.15 195);
-  --glow-muted: oklch(0.75 0.15 195 / 20%);
-}
-
-/* We force dark mode always — no light mode for this app */
-.dark {
-  /* Same as :root since we're always dark */
+  /* Cartoon palette custom tokens */
+  --color-candy-red: #FF6B6B;
+  --color-candy-yellow: #FFE66D;
+  --color-candy-green: #A8E6CF;
+  --color-candy-teal: #4ECDC4;
+  --color-candy-purple: #DDA0DD;
+  --color-candy-blue: #87CEEB;
 }
 
 @layer base {
@@ -107,19 +66,128 @@
   html {
     @apply font-sans;
   }
+
+  /*
+   * SoundScape — Cartoonish playful palette
+   * Placed inside @layer base to override shadcn's PostCSS-injected defaults
+   */
+  :root {
+    --background: #FFF8F0 !important;
+    --foreground: #2C3E50 !important;
+    --card: #FFFFFF !important;
+    --card-foreground: #2C3E50 !important;
+    --popover: #FFFFFF !important;
+    --popover-foreground: #2C3E50 !important;
+    --primary: #FF6B6B !important;
+    --primary-foreground: #FFFFFF !important;
+    --secondary: #FFF0E5 !important;
+    --secondary-foreground: #2C3E50 !important;
+    --muted: #F5EDE4 !important;
+    --muted-foreground: #8B7E74 !important;
+    --accent: #FFE66D !important;
+    --accent-foreground: #2C3E50 !important;
+    --destructive: #FF4757 !important;
+    --border: #F0E6DA !important;
+    --input: #F0E6DA !important;
+    --ring: #FF6B6B !important;
+    --chart-1: #FF6B6B !important;
+    --chart-2: #4ECDC4 !important;
+    --chart-3: #FFE66D !important;
+    --chart-4: #A8E6CF !important;
+    --chart-5: #DDA0DD !important;
+    --radius: 1rem !important;
+    --sidebar: #FFF0E5 !important;
+    --sidebar-foreground: #2C3E50 !important;
+    --sidebar-primary: #FF6B6B !important;
+    --sidebar-primary-foreground: #FFFFFF !important;
+    --sidebar-accent: #FFE66D !important;
+    --sidebar-accent-foreground: #2C3E50 !important;
+    --sidebar-border: #F0E6DA !important;
+    --sidebar-ring: #FF6B6B !important;
+  }
+
+  .dark {
+    --background: #1A1230 !important;
+    --foreground: #F5F0FF !important;
+    --card: #241B3D !important;
+    --card-foreground: #F5F0FF !important;
+    --popover: #241B3D !important;
+    --popover-foreground: #F5F0FF !important;
+    --primary: #FF6B6B !important;
+    --primary-foreground: #FFFFFF !important;
+    --secondary: #2D2248 !important;
+    --secondary-foreground: #F5F0FF !important;
+    --muted: #2D2248 !important;
+    --muted-foreground: #A89CC8 !important;
+    --accent: #FFE66D !important;
+    --accent-foreground: #1A1230 !important;
+    --destructive: #FF4757 !important;
+    --border: #3D2F5C !important;
+    --input: #3D2F5C !important;
+    --ring: #FF6B6B !important;
+    --chart-1: #FF6B6B !important;
+    --chart-2: #4ECDC4 !important;
+    --chart-3: #FFE66D !important;
+    --chart-4: #A8E6CF !important;
+    --chart-5: #DDA0DD !important;
+    --sidebar: #1F1636 !important;
+    --sidebar-foreground: #F5F0FF !important;
+    --sidebar-primary: #FF6B6B !important;
+    --sidebar-primary-foreground: #FFFFFF !important;
+    --sidebar-accent: #2D2248 !important;
+    --sidebar-accent-foreground: #F5F0FF !important;
+    --sidebar-border: #3D2F5C !important;
+    --sidebar-ring: #FF6B6B !important;
+  }
 }
 
-/* Custom utility classes for SoundScape */
+/* Cartoon utility classes */
 @layer utilities {
-  .glow-border {
-    box-shadow: 0 0 0 1px var(--glow-muted), 0 0 20px -5px var(--glow-muted);
+  .cartoon-shadow {
+    box-shadow:
+      0 4px 0 0 rgba(0, 0, 0, 0.1),
+      0 8px 20px -4px rgba(0, 0, 0, 0.08);
   }
-  .glow-text {
-    text-shadow: 0 0 20px var(--glow-muted);
+  .cartoon-shadow-lg {
+    box-shadow:
+      0 6px 0 0 rgba(0, 0, 0, 0.12),
+      0 12px 30px -6px rgba(0, 0, 0, 0.1);
   }
-  .glass {
-    background: oklch(0.13 0.005 260 / 60%);
-    backdrop-filter: blur(16px) saturate(1.4);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  .cartoon-border {
+    border: 3px solid var(--border);
   }
+  .candy-gradient {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 50%, #4ECDC4 100%);
+  }
+  .candy-text {
+    background: linear-gradient(135deg, #FF6B6B, #FFE66D, #4ECDC4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .wobble-hover:hover {
+    animation: wobble 0.6s ease-in-out;
+  }
+}
+
+@keyframes wobble {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(-5deg); }
+  30% { transform: rotate(3deg); }
+  45% { transform: rotate(-3deg); }
+  60% { transform: rotate(2deg); }
+  75% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.15); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }

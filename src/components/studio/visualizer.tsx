@@ -5,14 +5,11 @@ import { useEffect, useRef } from "react";
 interface VisualizerProps {
   analyserData: Float32Array | null;
   isPlaying: boolean;
-  accentColor?: string;
 }
 
-export function Visualizer({
-  analyserData,
-  isPlaying,
-  accentColor = "#22d3ee",
-}: VisualizerProps) {
+const BAR_COLORS = ["#FF6B6B", "#FFE66D", "#A8E6CF", "#4ECDC4", "#DDA0DD", "#87CEEB"];
+
+export function Visualizer({ analyserData, isPlaying }: VisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
   const timeRef = useRef(0);
@@ -42,73 +39,60 @@ export function Visualizer({
       const w = canvas.width / window.devicePixelRatio;
       const h = canvas.height / window.devicePixelRatio;
 
-      // Clear
+      // Clear with slight background
       ctx.clearRect(0, 0, w, h);
 
-      if (!isPlaying && !analyserData) {
-        // Idle state — gentle sine wave
-        ctx.beginPath();
-        ctx.strokeStyle = `${accentColor}33`;
-        ctx.lineWidth = 1.5;
-        for (let x = 0; x < w; x++) {
-          const y = h / 2 + Math.sin(x * 0.02 + t) * 15 + Math.sin(x * 0.01 + t * 0.5) * 8;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        animRef.current = requestAnimationFrame(draw);
-        return;
-      }
-
-      const barCount = 64;
-      const barWidth = w / barCount - 1;
+      const barCount = 48;
+      const gap = 4;
+      const barWidth = (w - gap * barCount) / barCount;
       const data = analyserData;
 
       for (let i = 0; i < barCount; i++) {
         let amplitude: number;
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && isPlaying) {
           const idx = Math.floor((i / barCount) * data.length);
-          // Convert dB (-100 to 0) to 0-1
           amplitude = Math.max(0, (data[idx] + 100) / 100);
         } else {
-          amplitude = 0.2 + Math.sin(t + i * 0.3) * 0.15;
+          // Idle bouncy wave
+          amplitude = 0.15 + Math.sin(t * 1.5 + i * 0.2) * 0.1 + Math.sin(t * 0.8 + i * 0.4) * 0.05;
         }
 
-        const barHeight = amplitude * h * 0.8;
-        const x = i * (barWidth + 1);
+        const barHeight = amplitude * h * 0.75;
+        const x = i * (barWidth + gap) + gap / 2;
         const y = h - barHeight;
+        const color = BAR_COLORS[i % BAR_COLORS.length];
 
-        // Gradient per bar
-        const gradient = ctx.createLinearGradient(x, h, x, y);
-        gradient.addColorStop(0, `${accentColor}15`);
-        gradient.addColorStop(0.5, `${accentColor}60`);
-        gradient.addColorStop(1, accentColor);
-
-        ctx.fillStyle = gradient;
+        // Rounded bars with cartoon colors
+        const radius = Math.min(barWidth / 2, 8);
+        ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.roundRect(x, y, barWidth, barHeight, [2, 2, 0, 0]);
+        ctx.roundRect(x, y, barWidth, barHeight, [radius, radius, 0, 0]);
         ctx.fill();
 
-        // Glow on top
-        ctx.shadowColor = accentColor;
-        ctx.shadowBlur = 8;
-        ctx.fillStyle = accentColor;
-        ctx.fillRect(x, y, barWidth, 2);
-        ctx.shadowBlur = 0;
+        // Cute dot on top
+        ctx.fillStyle = "#FFFFFF";
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+        ctx.arc(x + barWidth / 2, y + 4, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
       }
 
-      // Waveform overlay
+      // Wavy line on top
       ctx.beginPath();
-      ctx.strokeStyle = `${accentColor}40`;
-      ctx.lineWidth = 1;
-      for (let x = 0; x < w; x++) {
-        const dataIdx = data ? Math.floor((x / w) * data.length) : 0;
-        const val = data ? (data[dataIdx] + 100) / 100 : 0.5;
-        const y = h / 2 + (val - 0.5) * h * 0.6 + Math.sin(x * 0.03 + t * 2) * 3;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      ctx.strokeStyle = "#FF6B6B";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      for (let x = 0; x < w; x += 2) {
+        const yWave =
+          h * 0.3 +
+          Math.sin(x * 0.02 + t * 2) * 20 +
+          Math.sin(x * 0.01 + t) * 15;
+        if (x === 0) ctx.moveTo(x, yWave);
+        else ctx.lineTo(x, yWave);
       }
       ctx.stroke();
+      ctx.setLineDash([]);
 
       animRef.current = requestAnimationFrame(draw);
     }
@@ -119,12 +103,12 @@ export function Visualizer({
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", resize);
     };
-  }, [analyserData, isPlaying, accentColor]);
+  }, [analyserData, isPlaying]);
 
   return (
     <canvas
       ref={canvasRef}
-      className="h-full w-full rounded-xl"
+      className="h-full w-full rounded-2xl"
       aria-label="Audio visualizer"
     />
   );

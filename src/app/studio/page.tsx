@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { StudioHeader } from "@/components/studio/studio-header";
 import { Visualizer } from "@/components/studio/visualizer";
 import { Controls } from "@/components/studio/controls";
@@ -8,6 +9,11 @@ import { InputPanel } from "@/components/studio/input-panel";
 import { useAudioEngine } from "@/hooks/use-audio-engine";
 import { useWeather } from "@/hooks/use-weather";
 import { useMediaCapture } from "@/hooks/use-media-capture";
+
+const StudioScene = dynamic(
+  () => import("@/components/three/studio-scene").then((m) => m.StudioScene),
+  { ssr: false },
+);
 
 export default function StudioPage() {
   const {
@@ -42,7 +48,7 @@ export default function StudioPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar — Inputs */}
-        <aside className="hidden w-72 shrink-0 overflow-y-auto border-r border-border bg-card/20 p-4 backdrop-blur-md lg:block">
+        <aside className="hidden w-72 shrink-0 overflow-y-auto border-r-2 border-border bg-secondary/30 p-4 lg:block">
           <InputPanel
             isCapturing={isCapturing}
             capturedImage={capturedImage}
@@ -60,20 +66,20 @@ export default function StudioPage() {
           />
         </aside>
 
-        {/* Main area — Visualizer */}
+        {/* Main area — Visualizer + 3D */}
         <main className="flex flex-1 flex-col overflow-hidden">
-          {/* Visualizer canvas */}
           <div className="relative flex-1 p-4">
-            <div className="h-full overflow-hidden rounded-2xl border border-border bg-card/30 backdrop-blur-md">
-              <Visualizer
-                analyserData={analyserData}
-                isPlaying={isPlaying}
-              />
+            {/* 3D Scene behind visualizer */}
+            <StudioScene isPlaying={isPlaying} />
+
+            {/* Visualizer canvas */}
+            <div className="relative z-10 h-full overflow-hidden rounded-3xl border-2 border-border bg-card/80 cartoon-shadow-lg backdrop-blur-sm">
+              <Visualizer analyserData={analyserData} isPlaying={isPlaying} />
             </div>
 
             {/* Floating controls overlay (mobile) */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 lg:hidden">
-              <div className="glass rounded-full border border-border px-6 py-3">
+            <div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 lg:hidden">
+              <div className="rounded-full border-2 border-border bg-card p-4 cartoon-shadow-lg">
                 <Controls
                   isPlaying={isPlaying}
                   parameters={parameters}
@@ -87,7 +93,7 @@ export default function StudioPage() {
         </main>
 
         {/* Right sidebar — Controls & Layers */}
-        <aside className="hidden w-80 shrink-0 overflow-y-auto border-l border-border bg-card/20 p-4 backdrop-blur-md xl:block">
+        <aside className="hidden w-80 shrink-0 overflow-y-auto border-l-2 border-border bg-secondary/30 p-4 xl:block">
           <div className="space-y-6">
             <Controls
               isPlaying={isPlaying}
@@ -97,7 +103,7 @@ export default function StudioPage() {
               onUpdateParams={updateParameters}
             />
 
-            <div className="h-px bg-border" />
+            <div className="h-0.5 rounded-full bg-border" />
 
             <LayerMixer
               layers={parameters.layers}
