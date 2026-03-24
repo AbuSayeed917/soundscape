@@ -14,11 +14,16 @@ const DEFAULT_LAYERS: AudioLayer[] = [
 
 const NOTE_MAP: Record<string, string[]> = {
   C: ["C3", "E3", "G3", "B3", "D4", "F4", "A4", "C5"],
+  "C#": ["C#3", "F3", "G#3", "C4", "D#4", "F#4", "A#4", "C#5"],
   D: ["D3", "F#3", "A3", "C#4", "E4", "G4", "B4", "D5"],
+  "D#": ["D#3", "G3", "A#3", "D4", "F4", "G#4", "C5", "D#5"],
   E: ["E3", "G#3", "B3", "D#4", "F#4", "A4", "C#5", "E5"],
   F: ["F3", "A3", "C4", "E4", "G4", "Bb4", "D5", "F5"],
+  "F#": ["F#3", "A#3", "C#4", "F4", "G#4", "B4", "D#5", "F#5"],
   G: ["G3", "B3", "D4", "F#4", "A4", "C5", "E5", "G5"],
+  "G#": ["G#3", "C4", "D#4", "G4", "A#4", "C#5", "F5", "G#5"],
   A: ["A3", "C#4", "E4", "G#4", "B4", "D5", "F#5", "A5"],
+  "A#": ["A#3", "D4", "F4", "A4", "C5", "D#5", "G5", "A#5"],
   B: ["B3", "D#4", "F#4", "A#4", "C#5", "E5", "G#5", "B5"],
 };
 
@@ -32,7 +37,8 @@ export function useAudioEngine() {
     mood: "calm",
     layers: DEFAULT_LAYERS,
   });
-  const [analyserData, setAnalyserData] = useState<Float32Array | null>(null);
+  // Use a ref for analyser data to avoid 60fps state updates (fixes #2, #3)
+  const analyserDataRef = useRef<Float32Array<ArrayBuffer> | null>(null);
 
   const toneRef = useRef<typeof import("tone") | null>(null);
   const synthsRef = useRef<Map<string, unknown>>(new Map());
@@ -195,12 +201,13 @@ export function useAudioEngine() {
     Tone.getTransport().start();
     setIsPlaying(true);
 
-    // Start analyser animation loop
+    // Start analyser animation loop — writes to ref, not state (fixes #2)
     const updateAnalyser = () => {
       if (analyserRef.current) {
-        const data = new Float32Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getFloatFrequencyData(data);
-        setAnalyserData(new Float32Array(data));
+        if (!analyserDataRef.current || analyserDataRef.current.length !== analyserRef.current.frequencyBinCount) {
+          analyserDataRef.current = new Float32Array(analyserRef.current.frequencyBinCount);
+        }
+        analyserRef.current.getFloatFrequencyData(analyserDataRef.current);
       }
       animFrameRef.current = requestAnimationFrame(updateAnalyser);
     };
@@ -272,7 +279,7 @@ export function useAudioEngine() {
     isPlaying,
     isReady,
     parameters,
-    analyserData,
+    analyserDataRef,
     play,
     stop,
     toggleLayer,

@@ -19,7 +19,7 @@ export default function StudioPage() {
   const {
     isPlaying,
     parameters,
-    analyserData,
+    analyserDataRef,
     play,
     stop,
     toggleLayer,
@@ -74,7 +74,7 @@ export default function StudioPage() {
 
             {/* Visualizer canvas */}
             <div className="relative z-10 h-full overflow-hidden rounded-3xl border-2 border-border bg-card/80 cartoon-shadow-lg backdrop-blur-sm">
-              <Visualizer analyserData={analyserData} isPlaying={isPlaying} />
+              <Visualizer analyserDataRef={analyserDataRef} isPlaying={isPlaying} />
             </div>
 
             {/* Floating controls overlay (mobile) */}

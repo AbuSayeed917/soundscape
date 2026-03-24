@@ -5,10 +5,11 @@ import { useCallback, useRef, useState } from "react";
 export function useMediaCapture() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [micStream, setMicStream] = useState<MediaStream | null>(null);
   const [isMicActive, setIsMicActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  // Use ref for mic stream to avoid stale closures (fixes #4)
+  const micStreamRef = useRef<MediaStream | null>(null);
 
   const startCamera = useCallback(async () => {
     try {
@@ -56,7 +57,7 @@ export function useMediaCapture() {
   const startMicrophone = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      setMicStream(stream);
+      micStreamRef.current = stream;
       setIsMicActive(true);
       return stream;
     } catch {
@@ -65,10 +66,10 @@ export function useMediaCapture() {
   }, []);
 
   const stopMicrophone = useCallback(() => {
-    micStream?.getTracks().forEach((t) => t.stop());
-    setMicStream(null);
+    micStreamRef.current?.getTracks().forEach((t) => t.stop());
+    micStreamRef.current = null;
     setIsMicActive(false);
-  }, [micStream]);
+  }, []);
 
   const clearImage = useCallback(() => {
     setCapturedImage(null);
